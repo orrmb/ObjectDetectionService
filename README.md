@@ -148,43 +148,29 @@ Deployment notes:
 - Don't configure your compose file to build the images. Instead, push the `yolo5` and `polybot` images to DockerHub or an [ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/getting-started-console.html) repo and use these images. 
 - Attach an IAM role with the relevant permissions (e.g. read/write access to S3). Don't manage AWS credentials yourself, and never hard-code AWS credentials in the `docker-compose.yaml` file. 
 - Don't hard-code your telegram token in the compose file, this is a sensitive data. [Read here](https://docs.docker.com/compose/use-secrets/) how to provide your compose project this data in a safe way.  
-- You should use the instance's **public IP address** as the registered `polybot` app URL in Telegram servers, there is no need to use Ngrok. Read below how to do it.
-- Clean from vulnerabilities
+- Use `snyk` to clean your images from any HIGH and CRITICAL security vulnerabilities.
 
-Since the IP address may be changed, you should retrieve the public IP dynamically when the app is launched.
-This requires some code changes in `polybot/app.py`. As a reminder, the app url is provided to Telegram servers from an environment variable you define:
+#### Exposing the bot to Telegram server
 
-```python
-# line taken from polybot/app.py
-TELEGRAM_APP_URL = os.environ['TELEGRAM_APP_URL']
-```
+You can expose the polybot to Telegram servers by Ngrok, as done in the previous exercise (install and launch ngrok on the EC2 instance). 
 
-Let's modify this code to load the instance's public IP dynamically:
+Alternatively, you can use the instance's **public IP address** as the registered bot app URL in Telegram servers.
+This requires some code changes in `polybot/app.py`.
+
+Since the IP address may be changed, you should retrieve the public IP dynamically when the app is launching. You can get the instance public IP **from within** the instance by:
 
 ```python
 import requests 
 
 # reference https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
-TELEGRAM_APP_URL = requests.get('http://169.254.169.254/latest/meta-data/local-ipv4').text
+TELEGRAM_APP_URL = requests.get('http://169.254.169.254/latest/meta-data/public-ipv4').text
 ```
 
-But now a new problem arises. After this code change, the app won't work when running on our local machine, since the `http://169.254.169.254` address can be resolved only from within an EC2 instance (read the reference link to see why). 
+In addition, your flask webserver should listen to HTTPS requests (Telegram doesn't accept unsecure HTTP communication).
+For that, you should generate **self-signed certificate**, and use it when running the flask, as well as setting the webhook in Telegram. 
 
-Optimally, our apps should work smoothly both locally, when developers test their features, and also on production environment (on EC2 instance in our case), regardless of the context or environment.
-To achieve it we follow a very straightforward and common practice in software engineering - treat both cases in the code:
-
-```python
-import requests 
-
-if os.environ.get('TELEGRAM_APP_URL'): # if the TELEGRAM_APP_URL env var is defined, use it
-    TELEGRAM_APP_URL = os.environ['TELEGRAM_APP_URL']
-
-else:  # otherwiese, load the public ip address dynamically from within an EC2 instance  
-    # reference https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
-    TELEGRAM_APP_URL = requests.get('http://169.254.169.254/latest/meta-data/local-ipv4').text
-```
-
-Integrate this change in your `polybot/app.py` code.
+Here is a simple working example:    
+https://github.com/eternnoir/pyTelegramBotAPI/blob/master/examples/webhook_examples/webhook_flask_echo_bot.py
 
 ## Submission
 
