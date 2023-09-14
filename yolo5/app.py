@@ -1,11 +1,17 @@
+import json
 import time
 from pathlib import Path
+import pymongo
+import requests
 from flask import Flask, request
 from detect import run
 import uuid
 import yaml
 from loguru import logger
 import os
+import boto3
+from pymongo import MongoClient
+
 
 images_bucket = os.environ['BUCKET_NAME']
 
@@ -23,20 +29,20 @@ def predict():
 
     # Receives a URL parameter representing the image to download from S3
     img_name = request.args.get('imgName')
+    original_img_path = f'Image/{img_name}'
 
-    # TODO download img_name from S3, store the local image path in original_img_path
-    #  The bucket name should be provided as an env var BUCKET_NAME.
-    original_img_path = ...
-
+    s3 = boto3.client('s3', region_name='us-west-2')
+    s3.download_file(images_bucket, f'Images/{img_name}', original_img_path)
     logger.info(f'prediction: {prediction_id}/{original_img_path}. Download img completed')
+
 
     # Predicts the objects in the image
     run(
         weights='yolov5s.pt',
         data='data/coco128.yaml',
-        source=original_img_path,
         project='static/data',
         name=prediction_id,
+        source=original_img_path,
         save_txt=True
     )
 
@@ -44,12 +50,13 @@ def predict():
 
     # This is the path for the predicted image with labels
     # The predicted image typically includes bounding boxes drawn around the detected objects, along with class labels and possibly confidence scores.
-    predicted_img_path = Path(f'static/data/{prediction_id}/{original_img_path}')
+    predicted_img_path = Path(f'static/data/{prediction_id}/{img_name}')
 
-    # TODO Uploads the predicted image (predicted_img_path) to S3 (be careful not to override the original image).
-
+    s3.upload_file(f'static/data/{prediction_id}/{img_name}', images_bucket, f'Images-predicted/predict_{img_name}')
+    logger.info(f'Upload image to S3 bucket {images_bucket}')
     # Parse prediction labels and create a summary
-    pred_summary_path = Path(f'static/data/{prediction_id}/labels/{original_img_path.split(".")[0]}.txt')
+    pred_summary_path = Path(f'static/data/{prediction_id}/labels/{img_name.split(".")[0]}.txt')
+    logger.info(type(pred_summary_path))
     if pred_summary_path.exists():
         with open(pred_summary_path) as f:
             labels = f.read().splitlines()
@@ -66,18 +73,25 @@ def predict():
 
         prediction_summary = {
             'prediction_id': prediction_id,
-            'original_img_path': original_img_path,
-            'predicted_img_path': predicted_img_path,
+            'original_img_path': str(original_img_path),
+            'predicted_img_path': str(predicted_img_path),
             'labels': labels,
             'time': time.time()
         }
 
-        # TODO store the prediction_summary in MongoDB
-
-        return prediction_summary
+        cluster_uri = "mongodb://mongo1:27017,mongo2:27018,mongo3:27019/?replicaSet=myReplicaSet"
+        myclient = MongoClient(cluster_uri)
+        logger.info("Good Connection")
+        # Access the database and collection
+        mydb = myclient["mydatabase"]
+        mycol = mydb["images_predict"]
+        x = mycol.insert_one(prediction_summary)
+        myclient.close()
+        logger.info("Send Data to MongoDB")
+        return json.dumps(prediction_summary ,default=str,  indent=4)
     else:
         return f'prediction: {prediction_id}/{original_img_path}. prediction result not found', 404
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8081)
+    app.run(host='0.0.0.0', port=8081, debug=True)

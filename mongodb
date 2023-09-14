@@ -1,0 +1,35 @@
+docker network create mongoCluster
+
+#create mongo1 
+docker run -d --rm --name mongo1 -p 27017:27017 --network mongoCluster -v mongo1-data:/data/db mongo:4.4 mongod --replSet myReplicaSet --bind_ip localhost,mongo1
+
+#create mongo2
+docker run -d --rm --name mongo2 -p 27018:27017 --network mongoCluster -v mongo2-data:/data/db mongo:4.4 mongod --replSet myReplicaSet --bind_ip localhost,mongo2
+
+#create mongo3
+docker run -d --rm --name mongo3 -p 27019:27017 --network mongoCluster -v mongo3-data:/data/db mongo:4.4 mongod --replSet myReplicaSet --bind_ip localhost,mongo3
+
+#create cluster of mongodb
+
+docker exec -it mongo1 mongo --eval "rs.initiate({
+ _id: \"myReplicaSet\",
+ members: [
+   {_id: 0, host: \"mongo1\"},
+   {_id: 1, host: \"mongo2\"},
+   {_id: 2, host: \"mongo3\"}
+ ]
+})"
+
+docker exec -it mongo1 mongo --eval "rs.status()"
+
+
+mongodb://127.0.0.1:27017/?compressors=disabled&gssapiServiceName=mongodb
+
+
+docker build -t yolo5 .
+
+
+docker run --rm --name app.py --network mongoCluster  -p 8081:8081 -v $HOME/.aws/credentials:/root/.aws/credentials  -e "BUCKET_NAME=orrmb-s3" orrmb/yolo5-detect:1
+
+
+curl -X POST localhost:8081/predict?imgName=beatles.jpeg

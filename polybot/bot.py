@@ -1,8 +1,16 @@
+import requests
 import telebot
 from loguru import logger
 import os
 import time
 from telebot.types import InputFile
+import boto3
+from pymongo import MongoClient
+from collections import Counter
+import pymongo
+
+
+#from yolo5 import app
 
 
 class Bot:
@@ -11,7 +19,6 @@ class Bot:
         # create a new instance of the TeleBot class.
         # all communication with Telegram servers are done using self.telegram_bot_client
         self.telegram_bot_client = telebot.TeleBot(token)
-
         # remove any existing webhooks configured in Telegram servers
         self.telegram_bot_client.remove_webhook()
         time.sleep(0.5)
@@ -66,12 +73,46 @@ class Bot:
 
 
 class ObjectDetectionBot(Bot):
+
     def handle_message(self, msg):
         logger.info(f'Incoming message: {msg}')
 
         if self.is_current_msg_photo(msg):
+            images_bucket = os.environ['BUCKET_NAME']
+            s3 = boto3.client('s3', region_name='us-west-2')
             photo_path = self.download_user_photo(msg)
+            img_name = self.download_user_photo(msg).split('/')[1]
+            self.telegram_bot_client.send_message(msg['chat']['id'], text='A few moment')
+            s3.upload_file(photo_path, images_bucket, f'Images/{img_name}')
+            post = requests.post( url= f'http://localhost:8081/predict?imgName={img_name}')
+            try:
+                cluster_uri = "mongodb://mongo1:27017,mongo2:27018,mongo3:27019/?replicaSet=myReplicaSet"
+                myclient = MongoClient(cluster_uri)
+                logger.info("Good Connection")
+                mydb = myclient["mydatabase"]
+                mycol = mydb["images_predict"]
+                cur = mycol.find({})
+                documents = []
+                for document in cur:
+                    documents.append(document)
+                myclient.close()
+            except pymongo.errors.ServerSelectionTimeoutError:
+                logger.info("Error Connection")
 
-            # TODO upload the photo to S3
-            # TODO send a request to the `yolo5` service for prediction
-            # TODO send results to the Telegram end-user
+            object=[]
+            for x in document['labels']:
+                object.append(x['class'])
+            object_counts = Counter(object)
+            ans = ','.join([f'\n{obj}: {count}' for obj, count in object_counts.items()])
+            total = Counter.total(object_counts)
+            self.telegram_bot_client.send_message(msg['chat']['id'], text= f'There {total} Object in Picture : {ans}\n Thank you!')
+        elif msg['text'] == '/end':
+            self.telegram_bot_client.send_message(msg['chat']['id'], text='Thank you and never come back!!!')
+        elif msg['text'] == '/help':
+            self.telegram_bot_client.send_message(msg['chat']['id'], text='I am base on Yolo5 object detection AI model. It is known for its high accuracy object detection in images and videos, I can detect 80 objects.\n Try me!\n Send me a Photo like the example below')
+            self.telegram_bot_client.send_video(msg['chat']['id'], video=open('helpVideo.mp4', 'rb'), supports_streaming=True)
+        elif msg['text'] == '/start':
+            self.telegram_bot_client.send_message(msg['chat']['id'], text='Hi, my name is Yolobot.\nPlease send me a photo and I will try to predict the objects in your image')
+
+
+
