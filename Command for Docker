@@ -34,7 +34,7 @@ docker run --rm --name app.py --network mongoCluster  -p 8081:8081 -v $HOME/.aws
 docker network connect DATA bot-app.py
 
 
-docker run --rm --name bot-app.py -p 8443:8443 --network host -v $HOME/.aws/credentials:/root/.aws/credentials -e "BUCKET_NAME=<Bucket Name>" -e "TELEGRAM_TOKEN=<Enter TELEGRAM TOKEN>" -e "TELEGRAM_APP_URL=<Enter URL TELEGRAM>" bot-app:latest
+docker run --rm --name bot-app.py --network host -v $HOME/.aws/credentials:/root/.aws/credentials -e "BUCKET_NAME=<Bucket Name>" -e "TELEGRAM_TOKEN=<Enter TELEGRAM TOKEN>" -e "TELEGRAM_APP_URL=<Enter URL TELEGRAM>" bot-app:latest
 
 docker network connect DATA bot-app.py
 
