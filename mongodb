@@ -9,8 +9,10 @@ docker run -d --rm --name mongo2 -p 27018:27017 --network mongoCluster -v mongo2
 #create mongo3
 docker run -d --rm --name mongo3 -p 27019:27017 --network mongoCluster -v mongo3-data:/data/db mongo:4.4 mongod --replSet myReplicaSet --bind_ip localhost,mongo3
 
-#create cluster of mongodb
+Create another Network for DATA
 
+
+#create cluster of mongodb
 docker exec -it mongo1 mongo --eval "rs.initiate({
  _id: \"myReplicaSet\",
  members: [
