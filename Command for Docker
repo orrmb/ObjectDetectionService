@@ -29,12 +29,12 @@ mongodb://127.0.0.1:27017/?compressors=disabled&gssapiServiceName=mongodb
 docker build -t yolo5 .
 
 
-docker run --rm --name app.py --network mongoCluster  -p 8081:8081 -v $HOME/.aws/credentials:/root/.aws/credentials  -e "BUCKET_NAME=orrmb-s3" orrmb/yolo5-detect:1
+docker run --rm --name app.py --network mongoCluster  -p 8081:8081 -v $HOME/.aws/credentials:/root/.aws/credentials  -e "BUCKET_NAME=<Bucket Name>" orrmb/yolo5-detect:1
 
 docker network connect DATA bot-app.py
 
 
-docker run --rm --name bot-app.py -p 8443:8443 --network host -v $HOME/.aws/credentials:/root/.aws/credentials -e "BUCKET_NAME=orrmb-s3" -e "TELEGRAM_TOKEN=6590387650:AAHw1cFanYv9fCXIwt0zOjiwFGYmNNeFfNM" -e "TELEGRAM_APP_URL=https://50b9-2a06-c701-761f-6600-6ee9-3546-9a25-623.ngrok-free.app" bot-app:latest
+docker run --rm --name bot-app.py -p 8443:8443 --network host -v $HOME/.aws/credentials:/root/.aws/credentials -e "BUCKET_NAME=<Bucket Name>" -e "TELEGRAM_TOKEN=<Enter TELEGRAM TOKEN>" -e "TELEGRAM_APP_URL=<Enter URL TELEGRAM>" bot-app:latest
 
 docker network connect DATA bot-app.py
 
