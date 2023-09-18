@@ -18,7 +18,8 @@ services:
     environment:
       - BUCKET_NAME=
       - TELEGRAM_TOKEN=
-      - TELEGRAM_APP_URL=
+    secret:
+      - PATH
     volumes:
       - $HOME/.aws/credentials:/root/.aws/credentials
   mongodb1:
