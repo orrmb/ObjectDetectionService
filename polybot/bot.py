@@ -107,7 +107,7 @@ class ObjectDetectionBot(Bot):
         elif msg['text'] == '/end':
             self.telegram_bot_client.send_message(msg['chat']['id'], text='Thank you and never come back!!!')
             time.sleep(2)
-            self.telegram_bot_client.send_message(msg['chat']['id'], text='Hey, I`m Kidding, I`m here for you')
+            self.telegram_bot_client.send_message(msg['chat']['id'], text='Hey, I`m Kidding, I`m here for you, come back whenever you want ')
         elif msg['text'] == '/help':
             self.telegram_bot_client.send_message(msg['chat']['id'], text='I am base on Yolo5 object detection AI model. It is known for its high accuracy object detection in images and videos, I can detect 80 objects.\n Try me!\n Send me a Photo like the example below')
             self.telegram_bot_client.send_video(msg['chat']['id'], video=open('helpVideo.mp4', 'rb'), supports_streaming=True)

@@ -1,0 +1,70 @@
+services:
+  Yolo5-app:
+    image: orrmb/yolo5-detect:1
+    container_name: yolo-app
+    ports:
+      - "8081:8081"
+    networks:
+      - mongoCluster
+      - DATA
+    volumes:
+      - $HOME/.aws/credentials:/root/.aws/credentials
+    environment:
+      - BUCKET_NAME=
+  web-app:
+    image: orrmb/bot-app:1
+    container_name: bot-app
+    network_mode: host
+    environment:
+      - BUCKET_NAME=
+      - TELEGRAM_TOKEN=
+      - TELEGRAM_APP_URL=
+    volumes:
+      - $HOME/.aws/credentials:/root/.aws/credentials
+  mongodb1:
+    image: mongo:4
+    container_name: mongo1
+    networks:
+      - mongoCluster
+      - DATA
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo1-data:/data/db
+    command: mongod --replSet myReplicaSet --bind_ip localhost,mongo1
+  mongodb2:
+    image: mongo:4
+    container_name: mongo2
+    networks:
+      - mongoCluster
+      - DATA
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo2-data:/data/db
+    command: mongod --replSet myReplicaSet --bind_ip localhost,mongo2
+  mongodb3:
+    image: mongo:4
+    container_name: mongo3
+    networks:
+      - mongoCluster
+      - DATA
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongo3-data:/data/db
+    command: mongod --replSet myReplicaSet --bind_ip localhost,mongo3
+
+
+
+networks:
+  mongoCluster:
+    driver: bridge
+  DATA:
+    driver: bridge
+volumes:
+  mongo3-data:
+  mongo2-data:
+  mongo1-data:
+
+
