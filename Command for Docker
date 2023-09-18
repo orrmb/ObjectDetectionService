@@ -1,3 +1,6 @@
+
+#Create MongoCluster containers with Network
+
 docker network create mongoCluster
 
 #create mongo1 
@@ -29,17 +32,21 @@ mongodb://127.0.0.1:27017/?compressors=disabled&gssapiServiceName=mongodb
 docker build -t yolo5 .
 
 
+#Create Yolo5 container with networking
+docker network create DATA
+
 docker run --rm --name app.py --network mongoCluster  -p 8081:8081 -v $HOME/.aws/credentials:/root/.aws/credentials  -e "BUCKET_NAME=<Bucket Name>" orrmb/yolo5-detect:1
+
 
 docker network connect DATA bot-app.py
 
-
+#Create flask app contianer with networking
 docker run --rm --name bot-app.py --network host -v $HOME/.aws/credentials:/root/.aws/credentials -e "BUCKET_NAME=<Bucket Name>" -e "TELEGRAM_TOKEN=<Enter TELEGRAM TOKEN>" -e "TELEGRAM_APP_URL=<Enter URL TELEGRAM>" bot-app:latest
 
 docker network connect DATA bot-app.py
 
 curl -X POST localhost:8081/predict?imgName=beatles.jpeg
 
-docker network create DATA
+
 
 
