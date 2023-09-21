@@ -1,0 +1,154 @@
+orb@orb-VirtualBox:~$ docker exec -it mongo3 mongo --eval "rs.status()"
+MongoDB shell version v4.4.23
+connecting to: mongodb://127.0.0.1:27017/?compressors=disabled&gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("a3bbaa23-2b0b-4fc9-a617-98ea02de0acf") }
+MongoDB server version: 4.4.23
+{
+	"set" : "myReplicaSet",
+	"date" : ISODate("2023-09-21T19:57:30.525Z"),
+	"myState" : 1,
+	"term" : NumberLong(19),
+	"syncSourceHost" : "",
+	"syncSourceId" : -1,
+	"heartbeatIntervalMillis" : NumberLong(2000),
+	"majorityVoteCount" : 2,
+	"writeMajorityCount" : 2,
+	"votingMembersCount" : 3,
+	"writableVotingMembersCount" : 3,
+	"optimes" : {
+		"lastCommittedOpTime" : {
+			"ts" : Timestamp(1695326241, 1),
+			"t" : NumberLong(19)
+		},
+		"lastCommittedWallTime" : ISODate("2023-09-21T19:57:21.017Z"),
+		"readConcernMajorityOpTime" : {
+			"ts" : Timestamp(1695326241, 1),
+			"t" : NumberLong(19)
+		},
+		"readConcernMajorityWallTime" : ISODate("2023-09-21T19:57:21.017Z"),
+		"appliedOpTime" : {
+			"ts" : Timestamp(1695326241, 1),
+			"t" : NumberLong(19)
+		},
+		"durableOpTime" : {
+			"ts" : Timestamp(1695326241, 1),
+			"t" : NumberLong(19)
+		},
+		"lastAppliedWallTime" : ISODate("2023-09-21T19:57:21.017Z"),
+		"lastDurableWallTime" : ISODate("2023-09-21T19:57:21.017Z")
+	},
+	"lastStableRecoveryTimestamp" : Timestamp(1695326190, 1),
+	"electionCandidateMetrics" : {
+		"lastElectionReason" : "electionTimeout",
+		"lastElectionDate" : ISODate("2023-09-21T19:55:50.535Z"),
+		"electionTerm" : NumberLong(19),
+		"lastCommittedOpTimeAtElection" : {
+			"ts" : Timestamp(0, 0),
+			"t" : NumberLong(-1)
+		},
+		"lastSeenOpTimeAtElection" : {
+			"ts" : Timestamp(1695063662, 1),
+			"t" : NumberLong(18)
+		},
+		"numVotesNeeded" : 2,
+		"priorityAtElection" : 1,
+		"electionTimeoutMillis" : NumberLong(10000),
+		"numCatchUpOps" : NumberLong(0),
+		"newTermStartDate" : ISODate("2023-09-21T19:55:50.953Z"),
+		"wMajorityWriteAvailabilityDate" : ISODate("2023-09-21T19:55:51.173Z")
+	},
+	"members" : [
+		{
+			"_id" : 0,
+			"name" : "mongo1:27017",
+			"health" : 1,
+			"state" : 2,
+			"stateStr" : "SECONDARY",
+			"uptime" : 109,
+			"optime" : {
+				"ts" : Timestamp(1695326241, 1),
+				"t" : NumberLong(19)
+			},
+			"optimeDurable" : {
+				"ts" : Timestamp(1695326241, 1),
+				"t" : NumberLong(19)
+			},
+			"optimeDate" : ISODate("2023-09-21T19:57:21Z"),
+			"optimeDurableDate" : ISODate("2023-09-21T19:57:21Z"),
+			"lastAppliedWallTime" : ISODate("2023-09-21T19:57:21.017Z"),
+			"lastDurableWallTime" : ISODate("2023-09-21T19:57:21.017Z"),
+			"lastHeartbeat" : ISODate("2023-09-21T19:57:29.926Z"),
+			"lastHeartbeatRecv" : ISODate("2023-09-21T19:57:28.977Z"),
+			"pingMs" : NumberLong(7),
+			"lastHeartbeatMessage" : "",
+			"syncSourceHost" : "mongo3:27017",
+			"syncSourceId" : 2,
+			"infoMessage" : "",
+			"configVersion" : 1,
+			"configTerm" : 19
+		},
+		{
+			"_id" : 1,
+			"name" : "mongo2:27017",
+			"health" : 1,
+			"state" : 2,
+			"stateStr" : "SECONDARY",
+			"uptime" : 109,
+			"optime" : {
+				"ts" : Timestamp(1695326241, 1),
+				"t" : NumberLong(19)
+			},
+			"optimeDurable" : {
+				"ts" : Timestamp(1695326241, 1),
+				"t" : NumberLong(19)
+			},
+			"optimeDate" : ISODate("2023-09-21T19:57:21Z"),
+			"optimeDurableDate" : ISODate("2023-09-21T19:57:21Z"),
+			"lastAppliedWallTime" : ISODate("2023-09-21T19:57:21.017Z"),
+			"lastDurableWallTime" : ISODate("2023-09-21T19:57:21.017Z"),
+			"lastHeartbeat" : ISODate("2023-09-21T19:57:29.775Z"),
+			"lastHeartbeatRecv" : ISODate("2023-09-21T19:57:29.930Z"),
+			"pingMs" : NumberLong(20),
+			"lastHeartbeatMessage" : "",
+			"syncSourceHost" : "mongo3:27017",
+			"syncSourceId" : 2,
+			"infoMessage" : "",
+			"configVersion" : 1,
+			"configTerm" : 19
+		},
+		{
+			"_id" : 2,
+			"name" : "mongo3:27017",
+			"health" : 1,
+			"state" : 1,
+			"stateStr" : "PRIMARY",
+			"uptime" : 113,
+			"optime" : {
+				"ts" : Timestamp(1695326241, 1),
+				"t" : NumberLong(19)
+			},
+			"optimeDate" : ISODate("2023-09-21T19:57:21Z"),
+			"lastAppliedWallTime" : ISODate("2023-09-21T19:57:21.017Z"),
+			"lastDurableWallTime" : ISODate("2023-09-21T19:57:21.017Z"),
+			"syncSourceHost" : "",
+			"syncSourceId" : -1,
+			"infoMessage" : "Could not find member to sync from",
+			"electionTime" : Timestamp(1695326150, 1),
+			"electionDate" : ISODate("2023-09-21T19:55:50Z"),
+			"configVersion" : 1,
+			"configTerm" : 19,
+			"self" : true,
+			"lastHeartbeatMessage" : ""
+		}
+	],
+	"ok" : 1,
+	"$clusterTime" : {
+		"clusterTime" : Timestamp(1695326241, 1),
+		"signature" : {
+			"hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+			"keyId" : NumberLong(0)
+		}
+	},
+	"operationTime" : Timestamp(1695326241, 1)
+}
+
