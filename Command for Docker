@@ -6,11 +6,22 @@ docker network create mongoCluster
 #create mongo1 
 docker run -d --rm --name mongo1 -p 27017:27017 --network mongoCluster -v mongo1-data:/data/db mongo:4.4 mongod --replSet myReplicaSet --bind_ip localhost,mongo1
 
+docker run -d --rm --name mongo1 -p 27017:27017 --network objectdetectionservice_mongoCluster -v mongo1-data:/data/db mongo:4.4 mongod --replSet myReplicaSet --bind_ip localhost,mongo1
+objectdetectionservice_mongoCluster
+
 #create mongo2
 docker run -d --rm --name mongo2 -p 27018:27017 --network mongoCluster -v mongo2-data:/data/db mongo:4.4 mongod --replSet myReplicaSet --bind_ip localhost,mongo2
 
+docker run -d --rm --name mongo2 -p 27018:27017 --network objectdetectionservice_mongoCluster -v mongo2-data:/data/db mongo:4.4 mongod --replSet myReplicaSet --bind_ip localhost,mongo2
+
+objectdetectionservice_mongoCluster
+
 #create mongo3
 docker run -d --rm --name mongo3 -p 27019:27017 --network mongoCluster -v mongo3-data:/data/db mongo:4.4 mongod --replSet myReplicaSet --bind_ip localhost,mongo3
+
+docker run -d --rm --name mongo3 -p 27019:27017 --network objectdetectionservice_mongoCluster -v mongo3-data:/data/db mongo:4.4 mongod --replSet myReplicaSet --bind_ip localhost,mongo3
+
+objectdetectionservice_mongoCluster
 
 #create cluster of mongodb
 
@@ -42,6 +53,7 @@ docker network connect DATA bot-app.py
 
 #Create flask app contianer with networking
 docker run --rm --name bot-app.py --network host -v $HOME/.aws/credentials:/root/.aws/credentials -e "BUCKET_NAME=<Bucket Name>" -e "TELEGRAM_TOKEN=<Enter TELEGRAM TOKEN>" -e "TELEGRAM_APP_URL=<Enter URL TELEGRAM>" bot-app:latest
+
 
 docker network connect DATA bot-app.py
 

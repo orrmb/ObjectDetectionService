@@ -79,10 +79,9 @@ def predict():
             'time': time.time()
         }
 
-        cluster_uri = "mongodb://mongo1:27017,mongo2:27018,mongo3:27019/?replicaSet=myReplicaSet"
+        cluster_uri = "mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=myReplicaSet"
         myclient = MongoClient(cluster_uri)
         logger.info("Good Connection")
-        # Access the database and collection
         mydb = myclient["mydatabase"]
         mycol = mydb["images_predict"]
         x = mycol.insert_one(prediction_summary)

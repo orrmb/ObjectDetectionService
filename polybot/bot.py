@@ -82,9 +82,9 @@ class ObjectDetectionBot(Bot):
             img_name = self.download_user_photo(msg).split('/')[1]
             self.telegram_bot_client.send_message(msg['chat']['id'], text='A few moment')
             s3.upload_file(photo_path, images_bucket, f'Images/{img_name}')
-            post = requests.post( url= f'http://localhost:8081/predict?imgName={img_name}')
+            post = requests.post(url=f'http://yolo-app:8081/predict?imgName={img_name}')
             try:
-                cluster_uri = "mongodb://mongo1:27017,mongo2:27018,mongo3:27019/?replicaSet=myReplicaSet"
+                cluster_uri = "mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=myReplicaSet"
                 myclient = MongoClient(cluster_uri)
                 logger.info("Good Connection")
                 mydb = myclient["mydatabase"]
@@ -102,8 +102,9 @@ class ObjectDetectionBot(Bot):
                 object.append(x['class'])
             object_counts = Counter(object)
             ans = ','.join([f'\n{obj}: {count}' for obj, count in object_counts.items()])
-            total = Counter.total(object_counts)
-            self.telegram_bot_client.send_message(msg['chat']['id'], text= f'There {total} Object in Picture : {ans}\n Thank you!')
+            logger.info(object_counts)
+            sums = sum(object_counts.values())
+            self.telegram_bot_client.send_message(msg['chat']['id'], text= f'There {sums} Object in Picture : {ans}\n Thank you!')
         elif msg['text'] == '/end':
             self.telegram_bot_client.send_message(msg['chat']['id'], text='Thank you and never come back!!!')
             time.sleep(2)

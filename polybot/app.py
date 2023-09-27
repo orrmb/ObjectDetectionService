@@ -2,11 +2,19 @@ import flask
 from flask import request
 import os
 from bot import ObjectDetectionBot
+from loguru import logger
 
 app = flask.Flask(__name__)
 
-TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
+
+
+
+with open('/run/secrets/telegram_token', 'r') as file:
+    TELEGRAM_TOKEN = file.read().strip()
+
+
 TELEGRAM_APP_URL = os.environ['TELEGRAM_APP_URL']
+os.environ['TELEGRAM_TOKEN'] = TELEGRAM_TOKEN
 
 
 @app.route('/', methods=['GET'])
