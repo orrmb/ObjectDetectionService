@@ -13,7 +13,7 @@ import pymongo
 
 class Bot:
 
-    def __init__(self, token, telegram_chat_url):
+    def __init__(self, token, telegram_chat_url,cert_ssl):
         # create a new instance of the TeleBot class.
         # all communication with Telegram servers are done using self.telegram_bot_client
         self.telegram_bot_client = telebot.TeleBot(token)
@@ -22,7 +22,7 @@ class Bot:
         time.sleep(0.5)
 
         # set the webhook URL
-        self.telegram_bot_client.set_webhook(url=f'{telegram_chat_url}/{token}/',certificate=open(WEBHOOK_SSL_CERT, 'r'), timeout=60)
+        self.telegram_bot_client.set_webhook(url=f'{telegram_chat_url}/{token}/',certificate=open(cert_ssl, 'r'), timeout=60)
 
         logger.info(f'Telegram Bot information\n\n{self.telegram_bot_client.get_me()}')
 
