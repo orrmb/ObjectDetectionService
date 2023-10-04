@@ -32,7 +32,7 @@ def webhook():
 
 if __name__ == "__main__":
 
-    bot = ObjectDetectionBot(TELEGRAM_TOKEN,WEBHOOK_URL_BASE, WEBHOOK_SSL_CERT)
+    bot = ObjectDetectionBot(TELEGRAM_TOKEN,TELEGRAM_APP_URL, WEBHOOK_SSL_CERT)
     # Flask with https
     app.run(host='0.0.0.0', port=8443,
        ssl_context=(WEBHOOK_SSL_CERT, WEBHOOK_SSL_PRIV),
