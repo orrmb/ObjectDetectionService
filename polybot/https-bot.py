@@ -13,7 +13,7 @@ import pymongo
 
 class Bot:
 
-    def __init__(self, token, telegram_chat_url,cert_ssl):
+    def __init__(self, token, telegram_chat_url, cert_ssl):
         # create a new instance of the TeleBot class.
         # all communication with Telegram servers are done using self.telegram_bot_client
         self.telegram_bot_client = telebot.TeleBot(token)
