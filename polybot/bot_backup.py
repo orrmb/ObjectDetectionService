@@ -94,19 +94,17 @@ class ObjectDetectionBot(Bot):
                 for document in cur:
                     documents.append(document)
                 myclient.close()
-                object = []
-                for x in document['labels']:
-                    object.append(x['class'])
-                object_counts = Counter(object)
-                ans = ','.join([f'\n{obj}: {count}' for obj, count in object_counts.items()])
-                logger.info(object_counts)
-                sums = sum(object_counts.values())
-                self.telegram_bot_client.send_message(msg['chat']['id'],
-                                                      text=f'There {sums} Object in Picture : {ans}\n Thank you!')
             except pymongo.errors.ServerSelectionTimeoutError:
                 logger.info("Error Connection")
 
-
+            object=[]
+            for x in document['labels']:
+                object.append(x['class'])
+            object_counts = Counter(object)
+            ans = ','.join([f'\n{obj}: {count}' for obj, count in object_counts.items()])
+            logger.info(object_counts)
+            sums = sum(object_counts.values())
+            self.telegram_bot_client.send_message(msg['chat']['id'], text= f'There {sums} Object in Picture : {ans}\n Thank you!')
         elif msg['text'] == '/end':
             self.telegram_bot_client.send_message(msg['chat']['id'], text='Thank you and never come back!!!')
             time.sleep(2)
