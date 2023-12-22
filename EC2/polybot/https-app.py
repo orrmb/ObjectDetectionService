@@ -9,10 +9,14 @@ import requests
 with open('/run/secrets/telegram_token', 'r') as file:
     TELEGRAM_TOKEN = file.read().strip()
 
-HOST_IP = requests.get('http://169.254.169.254/latest/meta-data/public-ipv4').text
-WEBHOOK_SSL_CERT='./certificates/certificate.pem'
-WEBHOOK_SSL_PRIV='./certificates/private-key.pem'
-TELEGRAM_APP_URL = "https://%s:8443" % (HOST_IP)
+WEBHOOK_HOST = requests.get('http://169.254.169.254/latest/meta-data/public-ipv4').text
+WEBHOOK_PORT = 8443
+WEBHOOK_LISTEN = '0.0.0.0'
+
+WEBHOOK_SSL_CERT='./certificates/webhook_cert.pem'
+WEBHOOK_SSL_PRIV='./certificates/webhook_pkey.pem'
+
+WEBHOOK_URL_BASE = "https://%s:%s" % (WEBHOOK_HOST, WEBHOOK_PORT)
 WEBHOOK_URL_PATH = "/%s/" % (TELEGRAM_TOKEN)
 
 app = flask.Flask(__name__)
@@ -32,9 +36,9 @@ def webhook():
 
 if __name__ == "__main__":
 
-    bot = ObjectDetectionBot(TELEGRAM_TOKEN,TELEGRAM_APP_URL, WEBHOOK_SSL_CERT)
+    bot = ObjectDetectionBot(TELEGRAM_TOKEN,WEBHOOK_URL_BASE, WEBHOOK_SSL_CERT)
     # Flask with https
-    app.run(host='0.0.0.0', port=8443,
+    app.run(host='0.0.0.0', port=WEBHOOK_PORT,
        ssl_context=(WEBHOOK_SSL_CERT, WEBHOOK_SSL_PRIV),
-       debug=False)
+       debug=True)
 
