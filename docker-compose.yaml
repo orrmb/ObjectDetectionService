@@ -1,6 +1,6 @@
 services:
   Yolo5-app:
-    image: yolo-app:new
+    image: orrmb/yolo-app:work
     container_name: yolo-app
     ports:
       - "8081:8081"
@@ -12,7 +12,7 @@ services:
       - env_file.env
 
   web-app:
-    image: bot-app:test
+    image: orrmb/bot-app:work-local
     container_name: bot-app
     ports:
       - "8443:8443"

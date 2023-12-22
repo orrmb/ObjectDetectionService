@@ -1,0 +1,79 @@
+services:
+  Yolo5-app:
+    image: orrmb/yolo-app:work
+    container_name: yolo-app
+    ports:
+      - "8081:8081"
+    networks:
+      - DATA
+    volumes:
+      - $HOME/.aws/credentials:/root/.aws/credentials
+    env_file:
+      - env_file.env
+
+  web-app:
+    image: orrmb/bot-app:work-ec2
+    container_name: bot-app
+    ports:
+      - "8443:8443"
+    networks:
+      - DATA
+    env_file:
+      - env_file.env
+    environment:
+      TELEGRAM_TOKEN_FILE: /run/secrets/telegram_token
+    secrets:
+      - telegram_token
+    volumes:
+      - $HOME/.aws/credentials:/root/.aws/credentials
+
+  mongodb1:
+    image: mongo:4
+    container_name: mongo1
+    networks:
+      - mongoCluster
+      - DATA
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo1-data:/data/db
+    command: mongod --replSet myReplicaSet --bind_ip localhost,mongo1
+
+  mongodb2:
+    image: mongo:4
+    container_name: mongo2
+    networks:
+      - mongoCluster
+      - DATA
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo2-data:/data/db
+    command: mongod --replSet myReplicaSet --bind_ip localhost,mongo2
+
+  mongodb3:
+    image: mongo:4
+    container_name: mongo3
+    networks:
+      - mongoCluster
+      - DATA
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongo3-data:/data/db
+    command: mongod --replSet myReplicaSet --bind_ip localhost,mongo3
+
+networks:
+  mongoCluster:
+    driver: bridge
+  DATA:
+    driver: bridge
+
+volumes:
+  mongo3-data:
+  mongo2-data:
+  mongo1-data:
+
+secrets:
+  telegram_token:
+    file: ./token_bot.txt

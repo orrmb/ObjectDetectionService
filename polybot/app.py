@@ -1,12 +1,11 @@
 import flask
+import telebot
 from flask import request
 import os
 from bot import ObjectDetectionBot
 from loguru import logger
 
 app = flask.Flask(__name__)
-
-
 
 
 with open('/run/secrets/telegram_token', 'r') as file:

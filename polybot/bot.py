@@ -116,6 +116,9 @@ class ObjectDetectionBot(Bot):
             self.telegram_bot_client.send_video(msg['chat']['id'], video=open('helpVideo.mp4', 'rb'), supports_streaming=True)
         elif msg['text'] == '/start':
             self.telegram_bot_client.send_message(msg['chat']['id'], text='Hi, my name is Yolobot.\nPlease send me a photo and I will try to predict the objects in your image')
+        else:
+            self.telegram_bot_client.send_message(msg['chat']['id'], text='Sorry but I dont unsderstand what that means " {} ".\n Try using these command for help: /help'.format(msg["text"]))
+
 
 
 
