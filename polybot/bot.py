@@ -75,6 +75,7 @@ class ObjectDetectionBot(Bot):
     def handle_message(self, msg):
         logger.info(f'Incoming message: {msg}')
 
+
         if self.is_current_msg_photo(msg):
             images_bucket = os.environ['BUCKET_NAME']
             s3 = boto3.client('s3', region_name='us-west-2')

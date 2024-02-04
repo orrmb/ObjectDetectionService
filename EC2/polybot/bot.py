@@ -47,6 +47,7 @@ class Bot:
         data = self.telegram_bot_client.download_file(file_info.file_path)
         folder_name = file_info.file_path.split('/')[0]
 
+
         if not os.path.exists(folder_name):
             os.makedirs(folder_name)
 
