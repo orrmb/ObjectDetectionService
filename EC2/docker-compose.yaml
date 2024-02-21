@@ -6,8 +6,6 @@ services:
       - "8081:8081"
     networks:
       - DATA
-    volumes:
-      - $HOME/.aws/credentials:/root/.aws/credentials
     env_file:
       - env_file.env
 
@@ -24,8 +22,6 @@ services:
       TELEGRAM_TOKEN_FILE: /run/secrets/telegram_token
     secrets:
       - telegram_token
-    volumes:
-      - $HOME/.aws/credentials:/root/.aws/credentials
 
   mongodb1:
     image: mongo:4
