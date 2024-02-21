@@ -78,16 +78,20 @@ def predict():
             'labels': labels,
             'time': time.time()
         }
+        try:
+            cluster_uri = "mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=myReplicaSet"
+            myclient = MongoClient(cluster_uri)
+            logger.info("Good Connection")
+            mydb = myclient["mydatabase"]
+            mycol = mydb["images_predict"]
+            x = mycol.insert_one(prediction_summary)
+            myclient.close()
+            logger.info("Send Data to MongoDB")
+            return json.dumps(prediction_summary ,default=str,  indent=4)
+        except:
+            logger.info("Cant Connect to Mongo Cluster")
+            raise ConnectionError
 
-        cluster_uri = "mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=myReplicaSet"
-        myclient = MongoClient(cluster_uri)
-        logger.info("Good Connection")
-        mydb = myclient["mydatabase"]
-        mycol = mydb["images_predict"]
-        x = mycol.insert_one(prediction_summary)
-        myclient.close()
-        logger.info("Send Data to MongoDB")
-        return json.dumps(prediction_summary ,default=str,  indent=4)
     else:
         return f'prediction: {prediction_id}/{original_img_path}. prediction result not found', 404
 
