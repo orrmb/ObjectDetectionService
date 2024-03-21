@@ -4,7 +4,7 @@ import telebot
 
 WEBHOOK_SSL_CERT='./certificate.crt'
 WEBHOOK_SSL_PRIV='./private.pem'
-TELEGRAM_TOKEN='6590387650:AAEQ0DiFPXuWNLyJu_-NTi-vFPFZsbY3VbA'
+TELEGRAM_TOKEN= <TELEGRAM_BOT_TOKEN>
 TELEGRAM_APP_URL=requests.get('http://169.254.169.254/latest/meta-data/public-ipv4').text
 
 WEBHOOK_HOST = TELEGRAM_APP_URL
